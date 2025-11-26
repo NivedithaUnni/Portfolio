@@ -56,7 +56,7 @@ const TechStack = () => {
 
   return (
     <section id="skills" className="flex flex-col items-center section-padding bg-black min-h-screen">
-      <div className="w-full max-w-6xl px-5 md:px-10">
+      <div className="w-full max-w-6xl px-5 py-5 md:px-10 ">
         <TitleHeader
           title="How I Can Contribute & My Key Skills"
           sub="🤝 What I Bring to the Table"
