@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:wght@300;400;600;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root setup */
+html, body, #root {
+  background: #000;
+  color: #fff;
+}
+
+
+/* LOGO */
+.logo {
+  @apply text-[26px] font-extrabold text-white tracking-wide hover:scale-105 transition-all duration-300;
+  font-family: 'Mona Sans', sans-serif;
+}
+
+/* CONTACT BUTTON */
+.contact-btn {
+  @apply bg-[#3661DA] text-white px-6 py-2 rounded-full font-medium 
+         hover:bg-[#2b4fb6] transition-all duration-300;
+}
+
+.contact-btn .inner {
+  @apply flex items-center justify-center;
+}
+
+.glow {
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(10px);
+  filter: saturate(200);
+}
