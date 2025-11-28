@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Images
 import companyLogo from "../assets/images/company.png";
-import company1Logo from "../assets/images/Igoraza.jpg";
+import company1Logo from "../assets/images/igoraza.jpg";
 import collegeLogo from "../assets/images/college.png";
 import personalLogo from "../assets/images/personal.png";
 
