@@ -15,9 +15,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 const TimelineCard = ({ title, date, responsibilities, logoPath, align }) => (
   <div
-    className={`relative flex items-start gap-6 md:gap-10 w-full 
-      ${align === "left" ? "md:flex-row" : "md:flex-row-reverse"}
-    `}
+    className={`relative flex items-start gap-6 md:gap-10 w-full
+      ${align === "left" ? "md:flex-row" : "md:flex-row-reverse"}`}
   >
     {/* LOGO — timeline anchor */}
     <div className="flex flex-col items-center z-20 relative logo-point">
@@ -29,15 +28,13 @@ const TimelineCard = ({ title, date, responsibilities, logoPath, align }) => (
     {/* CARD */}
     <div
       className={`bg-[#111] border border-gray-700 rounded-xl p-6 shadow-lg min-h-[180px] w-full md:w-[350px] opacity-0 card
-        ${align === "left" ? "md:text-left" : "md:text-right"}
-      `}
+        ${align === "left" ? "md:text-left" : "md:text-right"}`}
     >
       <h3 className="text-xl font-semibold text-white">{title}</h3>
       <p className="text-sm text-gray-300 mb-2">{date}</p>
       <ul
-        className={`list-disc text-gray-400 
-          ${align === "left" ? "list-inside" : "list-outside md:pr-4"}
-        `}
+        className={`list-disc text-gray-400
+          ${align === "left" ? "list-inside" : "list-outside md:pr-4"}`}
       >
         {responsibilities.map((res, idx) => (
           <li key={idx}>{res}</li>
@@ -101,7 +98,7 @@ const Experience = () => {
   useEffect(() => {
     const cards = containerRef.current.querySelectorAll(".card");
 
-    // Card fade-in animation
+    // Fade-in animation for cards
     cards.forEach((card) => {
       gsap.fromTo(
         card,
@@ -118,36 +115,34 @@ const Experience = () => {
       );
     });
 
-    // Timeline line animation
+    // Function to position vertical line
     const updateLine = () => {
       const points = pointsRef.current;
+      if (!lineRef.current || points.length === 0) return;
 
-      if (points.length >= 2) {
-        const first = points[0];
-        const last = points[points.length - 1];
+      const first = points[0];
+      const last = points[points.length - 1];
 
-        const firstY = first.offsetTop + first.offsetHeight / 2;
-        const lastY = last.offsetTop + last.offsetHeight / 2;
+      const firstY = first.offsetTop + first.offsetHeight / 2;
+      const lastY = last.offsetTop + last.offsetHeight / 2;
 
-        const height = lastY - firstY;
+      const height = lastY - firstY;
 
-        gsap.set(lineRef.current, {
-          top: firstY,
-          height,
-        });
-      }
+      lineRef.current.style.top = `${firstY}px`;
+      lineRef.current.style.height = `${height}px`;
     };
 
     updateLine();
 
+    // Animate line scale on scroll
     gsap.fromTo(
       lineRef.current,
-      { height: 0 },
+      { scaleY: 0, transformOrigin: "top" },
       {
-        height: () => lineRef.current.style.height,
+        scaleY: 1,
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top top",
+          start: "top 80%",
           end: "bottom bottom",
           scrub: true,
         },
@@ -166,23 +161,17 @@ const Experience = () => {
   return (
     <section className="py-24 relative" ref={containerRef}>
       <div className="container mx-auto px-4 relative">
-
         <TitleHeader title="Experience" />
 
-        {/* Vertical Timeline */}
+        {/* Vertical Timeline Line */}
         <div
           ref={lineRef}
-          className="
-            absolute left-1/2 -translate-x-1/2 
-            w-1 bg-gradient-to-b 
-            from-blue-400 via-purple-500 to-pink-500
-            rounded-full shadow-lg z-0
-          "
+          className="absolute left-12 md:left-1/2 -translate-x-0 md:-translate-x-1/2 w-1 bg-gradient-to-b from-blue-400 via-purple-500 to-pink-500 rounded-full z-10 shadow-lg"
           style={{ height: 0 }}
         ></div>
 
         {/* Timeline Cards */}
-        <div className="mt-16 flex flex-col items-center gap-20 z-10 relative">
+        <div className="mt-16 flex flex-col items-center gap-20 relative">
           {expCards.map((card, index) => (
             <div
               key={index}
