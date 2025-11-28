@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Images
 import companyLogo from "../assets/images/company.png";
+import company1Logo from "../assets/images/Igoraza.jpg";
 import collegeLogo from "../assets/images/college.png";
 import personalLogo from "../assets/images/personal.png";
 
@@ -12,20 +13,32 @@ import TitleHeader from "../components/TitleHeader";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TimelineCard = ({ title, date, responsibilities, logoPath }) => (
-  <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
-    {/* Logo */}
-    <div className="flex flex-col items-center z-10 relative">
-      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
+const TimelineCard = ({ title, date, responsibilities, logoPath, align }) => (
+  <div
+    className={`relative flex items-start gap-6 md:gap-10 w-full 
+      ${align === "left" ? "md:flex-row" : "md:flex-row-reverse"}
+    `}
+  >
+    {/* LOGO — timeline anchor */}
+    <div className="flex flex-col items-center z-20 relative logo-point">
+      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-200">
         <img src={logoPath} alt={title} className="w-10 h-10 object-contain" />
       </div>
     </div>
 
-    {/* Card */}
-    <div className="bg-[#111] border border-gray-700 rounded-xl p-6 shadow-lg min-h-[180px] w-full md:w-[350px] opacity-0 card">
+    {/* CARD */}
+    <div
+      className={`bg-[#111] border border-gray-700 rounded-xl p-6 shadow-lg min-h-[180px] w-full md:w-[350px] opacity-0 card
+        ${align === "left" ? "md:text-left" : "md:text-right"}
+      `}
+    >
       <h3 className="text-xl font-semibold text-white">{title}</h3>
       <p className="text-sm text-gray-300 mb-2">{date}</p>
-      <ul className="list-disc list-inside text-gray-400">
+      <ul
+        className={`list-disc text-gray-400 
+          ${align === "left" ? "list-inside" : "list-outside md:pr-4"}
+        `}
+      >
         {responsibilities.map((res, idx) => (
           <li key={idx}>{res}</li>
         ))}
@@ -34,11 +47,23 @@ const TimelineCard = ({ title, date, responsibilities, logoPath }) => (
   </div>
 );
 
+// DATA
 const expCards = [
   {
-    title: "Frontend Developer Intern",
+    title: "Frontend Developer Intern at Axinor Technologies",
     date: "October 2025 – Dec 2025",
     logoPath: companyLogo,
+    responsibilities: [
+      "Built responsive UI using React & Tailwind.",
+      "Fixed bugs and improved performance.",
+      "Converted UI/UX designs to components.",
+      "Worked with Git and Figma.",
+    ],
+  },
+  {
+    title: "Frontend Developer Intern at Igoraza",
+    date: "August 2025 – October 2025",
+    logoPath: company1Logo,
     responsibilities: [
       "Built responsive UI using React & Tailwind.",
       "Fixed bugs and improved performance.",
@@ -71,19 +96,19 @@ const expCards = [
 const Experience = () => {
   const containerRef = useRef(null);
   const lineRef = useRef(null);
-  const logosRef = useRef([]);
+  const pointsRef = useRef([]);
 
   useEffect(() => {
     const cards = containerRef.current.querySelectorAll(".card");
 
-    // Animate cards
+    // Card fade-in animation
     cards.forEach((card) => {
       gsap.fromTo(
         card,
-        { opacity: 0, x: 50 },
+        { opacity: 0, y: 40 },
         {
           opacity: 1,
-          x: 0,
+          y: 0,
           duration: 0.8,
           scrollTrigger: {
             trigger: card,
@@ -93,53 +118,81 @@ const Experience = () => {
       );
     });
 
-    // Animate vertical timeline line between first and last logo
-    if (logosRef.current.length >= 2) {
-      const firstLogo = logosRef.current[0];
-      const lastLogo = logosRef.current[logosRef.current.length - 1];
-      const startTop = firstLogo.offsetTop + firstLogo.offsetHeight / 2;
-      const endTop = lastLogo.offsetTop + lastLogo.offsetHeight / 2;
-      const lineHeight = endTop - startTop;
+    // Timeline line animation
+    const updateLine = () => {
+      const points = pointsRef.current;
 
-      gsap.fromTo(
-        lineRef.current,
-        { height: 0, top: startTop },
-        {
-          height: lineHeight,
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: true,
-          },
-        }
-      );
-    }
+      if (points.length >= 2) {
+        const first = points[0];
+        const last = points[points.length - 1];
 
+        const firstY = first.offsetTop + first.offsetHeight / 2;
+        const lastY = last.offsetTop + last.offsetHeight / 2;
+
+        const height = lastY - firstY;
+
+        gsap.set(lineRef.current, {
+          top: firstY,
+          height,
+        });
+      }
+    };
+
+    updateLine();
+
+    gsap.fromTo(
+      lineRef.current,
+      { height: 0 },
+      {
+        height: () => lineRef.current.style.height,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      }
+    );
+
+    window.addEventListener("resize", updateLine);
     ScrollTrigger.refresh();
-    return () => ScrollTrigger.getAll().forEach((st) => st.kill());
+
+    return () => {
+      window.removeEventListener("resize", updateLine);
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+    };
   }, []);
 
   return (
     <section className="py-24 relative" ref={containerRef}>
       <div className="container mx-auto px-4 relative">
+
         <TitleHeader title="Experience" />
 
-        {/* Vertical line */}
+        {/* Vertical Timeline */}
         <div
           ref={lineRef}
-          className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gradient-to-b from-blue-400 via-purple-500 to-pink-500 rounded-full shadow-lg z-0"
+          className="
+            absolute left-1/2 -translate-x-1/2 
+            w-1 bg-gradient-to-b 
+            from-blue-400 via-purple-500 to-pink-500
+            rounded-full shadow-lg z-0
+          "
           style={{ height: 0 }}
         ></div>
 
-        <div className="mt-12 flex flex-col items-center gap-16 z-10">
+        {/* Timeline Cards */}
+        <div className="mt-16 flex flex-col items-center gap-20 z-10 relative">
           {expCards.map((card, index) => (
             <div
               key={index}
-              ref={(el) => (logosRef.current[index] = el)}
-              className="flex flex-col md:flex-row items-start md:items-center w-full gap-6 md:gap-10"
+              ref={(el) => (pointsRef.current[index] = el)}
+              className="w-full"
             >
-              <TimelineCard {...card} />
+              <TimelineCard
+                {...card}
+                align={index % 2 === 0 ? "left" : "right"}
+              />
             </div>
           ))}
         </div>

@@ -15,17 +15,14 @@ const ComputerModel = () => {
 
   useEffect(() => {
     if (groupRef.current) {
-      // Calculate bounding box
       const box = new THREE.Box3().setFromObject(groupRef.current);
       const size = new THREE.Vector3();
       box.getSize(size);
 
-      // Increase size
-      const desiredHeight = 8; // larger than before
+      const desiredHeight = 8;
       const scaleFactor = desiredHeight / size.y;
       setScale(scaleFactor);
 
-      // Center and ground the model
       const center = new THREE.Vector3();
       box.getCenter(center);
       setYOffset(-center.y * scaleFactor);
@@ -43,7 +40,6 @@ const ComputerModel = () => {
     </group>
   );
 };
-
 
 useGLTF.preload("/models/phone.glb");
 
@@ -80,14 +76,50 @@ const Contact = () => {
   return (
     <section id="contact" className="flex-center section-padding text-white">
       <div className="w-full h-full md:px-10 px-5">
-        <TitleHeader
-          title="Get in Touch – Let’s Connect"
-          sub="💬 Have questions or ideas? Let’s talk! 🚀"
-        />
 
+        {/* ===========================
+              MOBILE ORDER 1 — GLB
+            =========================== */}
+        <div className="xl:hidden order-1 min-h-[550px] mt-10">
+
+          <div className="bg-gradient-to-r from-[#0a0a33] to-[#6a00ff] 
+          w-full h-[500px] rounded-3xl overflow-hidden">
+
+            <Canvas
+              camera={{ position: [10, 6, 12], fov: 45 }}
+              style={{ background: "transparent" }}
+            >
+              <ambientLight intensity={0.6} />
+              <directionalLight position={[5, 5, 5]} intensity={1.2} />
+              <OrbitControls
+                enableZoom={false}
+                autoRotate
+                autoRotateSpeed={2}
+                maxPolarAngle={Math.PI / 2}
+              />
+              <ComputerModel />
+            </Canvas>
+
+          </div>
+        </div>
+
+        {/* ===========================
+              MOBILE ORDER 2 — TITLE
+            =========================== */}
+        <div className="order-2 mt-10">
+          <TitleHeader
+            title="Get in Touch – Let’s Connect"
+            sub="💬 Have questions or ideas? Let’s talk! 🚀"
+          />
+        </div>
+
+        {/* ===========================
+              GRID FOR DESKTOP
+            =========================== */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 mt-16">
-          {/* Contact Form */}
-          <div className="xl:col-span-5">
+
+          {/* FORM */}
+          <div className="xl:col-span-5 order-3 xl:order-1">
             <div className="bg-[#111] border border-gray-700 rounded-xl p-10 shadow-lg">
               <form
                 ref={formRef}
@@ -143,15 +175,15 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* 3D Model */}
-          <div className="xl:col-span-7 min-h-[450px]">
-            <div className="bg-[#cd7c2e] w-full h-full rounded-3xl overflow-hidden">
-      <Canvas
-  camera={{ position: [10, 6, 12], fov: 45 }}
-  style={{ background: "#cd7c2e" }}
->
+          {/* DESKTOP GLB (Right Side) */}
+          <div className="hidden xl:block xl:col-span-7 order-2">
+            <div className="bg-gradient-to-r from-[#0a0a33] to-[#6a00ff] 
+            w-full h-full rounded-3xl overflow-hidden min-h-[550px]">
 
-
+              <Canvas
+                camera={{ position: [10, 6, 12], fov: 45 }}
+                style={{ background: "transparent" }}
+              >
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[5, 5, 5]} intensity={1.2} />
                 <OrbitControls
@@ -162,6 +194,7 @@ const Contact = () => {
                 />
                 <ComputerModel />
               </Canvas>
+
             </div>
           </div>
         </div>
